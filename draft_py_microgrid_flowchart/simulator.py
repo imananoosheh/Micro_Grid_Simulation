@@ -1,6 +1,7 @@
 from ctl_logic import *
+import random
 
-test_grid = Microgrid(100,100,100,100,100)
+test_grid = Microgrid(random.randrange(101),random.randrange(101),random.randrange(101),random.randrange(101),random.randrange(101))
 
 
 #creating and adding nodes
@@ -56,8 +57,24 @@ test_grid.add_node(n16)
 n17 = Node17(17,test_grid)
 test_grid.add_node(n17)
 
-test_grid.next_node(n1)
-
-while(true):
-    test_grid.next_node.function()
+test_grid.set_next_node(n1)
     
+def func(num):
+    first = True
+    while(num > 0):
+        if test_grid.next_node == n1:
+            test_grid.set_pwr_battery(random.randrange(101))
+            test_grid.set_pwr_load(random.randrange(101))
+            test_grid.set_pwr_pv(random.randrange(101))
+            test_grid.set_soc(random.randrange(101))
+        print("-------------------------------------------------------------")
+        print("Current Node is : " + str(test_grid.next_node.id_number))
+        print("SoC is : " + str(test_grid.soc) + "%")
+        print("battery power is : " + str(test_grid.pwr_battery) )
+        print("PV power is : " + str(test_grid.pwr_pv))
+        print("Load / Grid is :" + str(test_grid.pwr_load))
+        test_grid.next_node.function()
+        num -= 1
+        print("-------------------------------------------------------------")
+        
+func(100)
