@@ -1,4 +1,5 @@
 import random
+import datetime
 
 class Microgrid:
     def __init__(self, total_pwr_consump, pwr_load, pwr_battery, pwr_pv, soc):
@@ -7,6 +8,7 @@ class Microgrid:
         self.pwr_battery = pwr_battery
         self.pwr_pv = pwr_pv
         self.soc = soc
+        self.max_battery_capacity = 10000 #watt
         self.nodes = []
         self.next_node = Node(0,self)
         
@@ -22,8 +24,19 @@ class Microgrid:
     def get_pwr_battery(self):
         return self.pwr_battery
 
-    def set_pwr_pv(self, number):
-        self.pwr_pv = number
+    def set_pwr_pv(self):
+        localhour = datetime.datetime.now().hour
+        localminute = datetime.datetime.now().minute
+        if (localhour >= 0) & (localhour < 6 ):
+            self.pwr_pv = 0 #watt (no sun)
+        elif (localhour >= 6) & (localhour < 12 ):
+            self.pwr_pv = ((1000*((localhour-6)*60+localminute)))/(6*60)
+            #watt calculation in linear func of y=x which y[0watt:1000watt] and x[6am:12pm]
+        elif (localhour >= 12) & (localhour < 18 ):
+            self.pwr_pv = (1-(((localhour-12)*60+localminute)/(6*60)))*1000
+            #watt calculation in linear func of y=-x which y[1000watt:0watt] and x[12pm:18pm]
+        elif (localhour >= 18) & (localhour <= 23 ):
+            self.pwr_pv = 0 #watt (no sun)
 
     def get_pwr_pv(self):
         return self.pwr_pv
@@ -33,6 +46,9 @@ class Microgrid:
     
     def get_soc(self):
         return self.soc
+
+    def get_max_battery_capacity(self):
+        return self.max_battery_capacity
 
     def set_total_pwr_consump(self, number):
         self.total_pwr_consump = number
@@ -72,16 +88,18 @@ class Microgrid:
         print("sell load" + temp)
 
     def grid_state_mode(self):
-        temp = random.randrange(0,3)
-        if temp == 0:
+        localhour = datetime.datetime.now().hour
+        #temp = random.randrange(0,3)
+        if (localhour >= 0) & (localhour < 6 ):
             print ("buying")
             return "buying"
-        elif temp == 1:
-            print("selling")
-            return "selling"
-        elif temp == 2:
+        elif (localhour >= 6) & (localhour < 18 ):
             print("normal")
             return "normal"
+        elif (localhour >= 18) & (localhour <= 23 ):
+            print("selling")
+            return "selling"
+        
 
 class Node:
     def __init__(self, id_number, microgrid):

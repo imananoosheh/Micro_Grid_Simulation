@@ -65,7 +65,7 @@ def func(num):
         if test_grid.next_node == n1:
             test_grid.set_pwr_battery(random.randrange(101))
             test_grid.set_pwr_load(random.randrange(101))
-            test_grid.set_pwr_pv(random.randrange(101))
+            test_grid.set_pwr_pv()
             test_grid.set_soc(random.randrange(101))
         print("-------------------------------------------------------------")
         print("Current Node is : " + str(test_grid.next_node.id_number))
@@ -77,4 +77,4 @@ def func(num):
         num -= 1
         print("-------------------------------------------------------------")
         
-func(100)
+func(50)
