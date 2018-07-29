@@ -2,8 +2,8 @@ import random
 import datetime
 
 class Microgrid:
-    def __init__(self, total_pwr_consump, pwr_load, pwr_battery, pwr_pv, soc):
-        self.total_pwr_consump = total_pwr_consump
+    def __init__(self, pwr_grid, pwr_load, pwr_battery, pwr_pv, soc):
+        self.pwr_grid = pwr_grid
         self.pwr_load = pwr_load
         self.pwr_battery = pwr_battery
         self.pwr_pv = pwr_pv
@@ -50,11 +50,11 @@ class Microgrid:
     def get_max_battery_capacity(self):
         return self.max_battery_capacity
 
-    def set_total_pwr_consump(self, number):
-        self.total_pwr_consump = number
+    def set_pwr_grid(self, number):
+        self.pwr_grid = number
     
-    def get_total_pwr_consump(self):
-        return self.total_pwr_consump
+    def get_pwr_grid(self):
+        return self.pwr_grid
 
     def add_node(self, n):
         self.nodes.append(n)
@@ -168,7 +168,7 @@ class Node7(Node):
             self.microgrid.sell_load(self.microgrid.pwr_battery)
             self.goto(1)
         else:
-            self.microgrid.charge_battery(self.microgrid.pwr_pv, self.microgrid.pwr_battery)
+            self.microgrid.charge_battery(self.microgrid.pwr_pv, self.microgrid.pwr_grid)
             self.goto(8)
 
 class Node8(Node):
@@ -194,7 +194,7 @@ class Node10(Node):
         if self.microgrid.soc == 100:
             pass
         else:
-            self.microgrid.charge_battery(self.microgrid.pwr_load)
+            self.microgrid.charge_battery(self.microgrid.pwr_grid)
         self.goto(1)
 
 class Node11(Node):
@@ -210,7 +210,7 @@ class Node12(Node):
         if self.microgrid.pwr_battery >+ (self.microgrid.pwr_load - self.microgrid.pwr_pv):
             self.microgrid.sell_load(self.microgrid.pwr_battery)
         else:
-            self.microgrid.supply_load(self.microgrid.pwr_pv, self.microgrid.pwr_battery, self.microgrid.pwr_load)
+            self.microgrid.supply_load(self.microgrid.pwr_pv, self.microgrid.pwr_battery, self.microgrid.pwr_grid)
         self.goto(1)
 
 class Node13(Node):
@@ -218,7 +218,7 @@ class Node13(Node):
         if self.microgrid.pwr_battery >= (self.microgrid.pwr_load - self.microgrid.pwr_pv):
             self.microgrid.supply_load(self.microgrid.pwr_pv, self.microgrid.pwr_battery)
         else:
-            self.microgrid.supply_load(self.microgrid.pwr_pv, self.microgrid.pwr_battery, self.microgrid.pwr_load)
+            self.microgrid.supply_load(self.microgrid.pwr_pv, self.microgrid.pwr_battery, self.microgrid.pwr_grid)
         self.goto(1)
 
 class Node14(Node):
@@ -226,7 +226,7 @@ class Node14(Node):
         if self.microgrid.soc > 70:
             self.goto(12)
         else:
-            self.microgrid.supply_load(self.microgrid.pwr_pv, self.microgrid.pwr_battery, self.microgrid.pwr_load)
+            self.microgrid.supply_load(self.microgrid.pwr_pv, self.microgrid.pwr_battery, self.microgrid.pwr_grid)
             self.goto(1)
 
 class Node15(Node):
@@ -234,7 +234,7 @@ class Node15(Node):
         if self.microgrid.soc > 0:
             self.goto(13)
         else:
-            self.microgrid.supply_load(self.microgrid.pwr_pv, self.microgrid.pwr_load)
+            self.microgrid.supply_load(self.microgrid.pwr_pv, self.microgrid.pwr_grid)
             self.goto(1)
 
 class Node16(Node):
@@ -250,8 +250,8 @@ class Node16(Node):
 class Node17(Node):
     def function(self):
         if self.microgrid.soc == 100:
-            self.microgrid.supply_load(self.microgrid.pwr_pv, self.microgrid.pwr_load)
+            self.microgrid.supply_load(self.microgrid.pwr_pv, self.microgrid.pwr_grid)
         else:
-            self.microgrid.charge_battery(self.microgrid.pwr_load)
+            self.microgrid.charge_battery(self.microgrid.pwr_grid)
         self.goto(1)
 
